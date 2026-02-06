@@ -1,26 +1,77 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #000000;
-  }
+  --comic-outline-color: black;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: white;
+  color: black;
   font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.comic-title {
+  font-family: 'Luckiest Guy', cursive; /* Apply Luckiest Guy font */
+  font-size: 4rem; /* Large font size */
+  font-weight: normal; /* Luckiest Guy is naturally bold */
+  color: white; /* White fill color */
+  -webkit-text-stroke: 2px var(--comic-outline-color); /* Black outline */
+  text-stroke: 2px var(--comic-outline-color); /* Fallback for text-stroke */
+  text-shadow: 4px 4px 0px var(--comic-outline-color); /* Adds depth like a comic text */
+  cursor: pointer; /* Indicate it's interactive/animated */
+  margin-bottom: 1.5rem; /* Increased margin for spacing before subtitle */
+  text-align: center;
+  line-height: 1; /* Adjust line height for comic style */
+}
+
+.comic-subtitle {
+  font-family: 'Luckiest Guy', cursive; /* Apply Luckiest Guy font */
+  font-size: 2.5rem; /* Smaller font size */
+  font-weight: normal; /* Luckiest Guy is naturally bold */
+  color: white; /* White fill color */
+  -webkit-text-stroke: 1.5px var(--comic-outline-color); /* Slightly thinner black outline */
+  text-stroke: 1.5px var(--comic-outline-color); /* Fallback for text-stroke */
+  text-shadow: 3px 3px 0px var(--comic-outline-color); /* Adds depth */
+  font-style: normal; /* Remove italicization */
+  margin-top: 0; /* No top margin as title has margin-bottom */
+  text-align: center;
+  line-height: 1;
+  animation: none !important;
+}
+
+@keyframes comicBounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+.black-box {
+  background-color: transparent !important;
+  border: 2px solid black;
+  margin-top: 0px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.card {
+  background-color: transparent; /* Unfilled */
+  padding: 1rem; /* Some internal spacing */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 0.5rem; /* Slightly rounded corners */
+  color: black; /* Ensure text is visible */
 }
