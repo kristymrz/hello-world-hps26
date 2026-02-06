@@ -42,12 +42,19 @@ export default function Home() {
         setError(error.message);
         setHasMore(false); // If there's an error, assume no more items
       } else {
-        const processedImages = data?.map(captionData => ({
-          id: captionData.images.id,
-          url: captionData.images.url,
-          image_description: captionData.images.image_description,
-          caption: captionData.content,
-        })) || [];
+        const processedImages = data?.map(captionData => {
+          // Safely determine the image object, accounting for it potentially being an array or a direct object
+          const image = Array.isArray(captionData.images) ? captionData.images[0] : captionData.images;
+          if (!image) {
+            return null; // Skip if no valid image data
+          }
+          return {
+            id: image.id,
+            url: image.url,
+            image_description: image.image_description,
+            caption: captionData.content,
+          };
+        }).filter(Boolean) || [];
 
         if (page === 0) {
           setImages(processedImages);

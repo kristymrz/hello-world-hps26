@@ -28,6 +28,8 @@ Example usage: process.env.NEXT_PUBLIC_SUPABASE_URL
 
 ## Database Schema Reference
 
+
+
 The canonical database schema is defined in `db/schema.sql`
 
 Rules:
