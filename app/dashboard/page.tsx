@@ -7,8 +7,7 @@ import { SignOutButton } from '@/components/SignOutButton';
 const ITEMS_PER_PAGE = 12;
 
 export default async function DashboardPage() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
 

@@ -10,8 +10,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL('/?error=no_code', request.url));
   }
 
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
 
   try {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
