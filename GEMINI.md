@@ -28,8 +28,6 @@ Example usage: process.env.NEXT_PUBLIC_SUPABASE_URL
 
 ## Database Schema Reference
 
-
-
 The canonical database schema is defined in `db/schema.sql`
 
 Rules:
@@ -37,3 +35,27 @@ Rules:
 - Use table and column names exactly as defined in schema.sql
 - Do not inline or paste the full SQL schema into responses
 - Do not restate large portions of the schema from memory
+
+## Change Tracking
+
+**Before starting any task:**
+1. Read CHANGELOG.md (if it exists) to understand current project state
+2. Check for existing implementations of what you're about to create
+3. Note any dependencies or architectural decisions from previous work
+
+**After completing each task:**
+Append a brief entry to CHANGELOG.md with:
+- Date and time
+- What was changed (files created, modified, or deleted)
+- Why the change was made (what problem it solved or feature it added)
+- Any important decisions or trade-offs made
+
+Format:
+```
+## [YYYY-MM-DD HH:MM] - Brief Description
+**Changed:** List of files modified/created/deleted
+**Reason:** Why this change was necessary
+**Notes:** Any important context, decisions, or gotchas for future reference
+```
+
+If CHANGELOG.md doesn't exist, create it first.
