@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Converted the dashboard page to a Server Component and moved the image grid to a separate Client Component to handle client-side pagination.
+- Updated the login page to display user-friendly error messages based on URL query parameters.
 
 ### Fixed
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a TypeScript error in `app/dashboard/page.tsx` where `createClient()` was incorrectly called with `cookieStore` as an argument. The `createClient()` function from `@/lib/supabase/server` now correctly handles cookies internally without requiring explicit parameters.
 - Fixed a TypeScript error in `lib/supabase/server.ts` where the `cookies()` function was not awaited. The `createClient()` function is now `async` and correctly awaits the `cookies()` call.
 - Fixed TypeScript errors in `app/auth/callback/route.ts` and `app/dashboard/page.tsx` where the `createClient()` call was not awaited. All calls to the async `createClient()` function from `@/lib/supabase/server` are now properly awaited.
+- Fixed a Next.js error in `app/page.tsx` where `useSearchParams()` was not wrapped in a `Suspense` boundary. The error display logic has been extracted to a separate `ErrorDisplay` component and wrapped in `<Suspense>`.
 
 ### Refactored
 
