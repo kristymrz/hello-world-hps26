@@ -43,6 +43,7 @@ export default async function DashboardPage() {
     }
     return {
       id: image.id,
+      captionId: captionData.id,
       url: image.url,
       image_description: image.image_description,
       caption: captionData.content,
