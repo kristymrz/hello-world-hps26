@@ -1,8 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Handjet&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: 'Handjet', Arial, Helvetica, sans-serif;
+}
 
 :root {
   --comic-outline-color: black;
@@ -11,7 +16,7 @@
 body {
   background-color: white;
   color: black;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Handjet', Arial, Helvetica, sans-serif;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -23,9 +28,6 @@ body {
   font-size: 4rem; /* Large font size */
   font-weight: normal; /* Luckiest Guy is naturally bold */
   color: white; /* White fill color */
-  -webkit-text-stroke: 2px var(--comic-outline-color); /* Black outline */
-  text-stroke: 2px var(--comic-outline-color); /* Fallback for text-stroke */
-  text-shadow: 4px 4px 0px var(--comic-outline-color); /* Adds depth like a comic text */
   cursor: pointer; /* Indicate it's interactive/animated */
   margin-bottom: 1.5rem; /* Increased margin for spacing before subtitle */
   text-align: center;
@@ -37,32 +39,14 @@ body {
   font-size: 2.5rem; /* Smaller font size */
   font-weight: normal; /* Luckiest Guy is naturally bold */
   color: white; /* White fill color */
-  -webkit-text-stroke: 1.5px var(--comic-outline-color); /* Slightly thinner black outline */
-  text-stroke: 1.5px var(--comic-outline-color); /* Fallback for text-stroke */
-  text-shadow: 3px 3px 0px var(--comic-outline-color); /* Adds depth */
   font-style: normal; /* Remove italicization */
   margin-top: 0; /* No top margin as title has margin-bottom */
   text-align: center;
   line-height: 1;
-  animation: none !important;
 }
-
-@keyframes comicBounce {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.02);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
 
 .black-box {
   background-color: transparent !important;
-  border: 2px solid black;
   margin-top: 0px;
   margin-left: 50px;
   margin-right: 50px;

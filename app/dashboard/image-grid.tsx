@@ -11,6 +11,7 @@ function CaptionCard({ image }: { image: any }) {
   const [currentVote, setCurrentVote] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
+  const [isPressed, setIsPressed] = useState<1 | -1 | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -49,42 +50,75 @@ function CaptionCard({ image }: { image: any }) {
   };
 
   return (
-    <div key={image.id} className="card flex flex-col h-full">
+    <div key={image.id} className="card flex flex-col">
       <div className="flex-grow">
         <Image
           src={image.url}
           alt={image.image_description || "Image"}
           width={300}
           height={200}
-          layout="responsive"
-          objectFit="contain"
+          className="w-full h-48 object-contain"
         />
-        <p className="mt-2 text-sm">{image.caption}</p>
+        <p className="mt-2 text-[25px] text-center">{image.caption}</p>
       </div>
-      <div className="flex gap-2 mt-4 items-center">
+      <div 
+        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '16px', width: '100%' }}
+      >
         <button
           onClick={() => handleVote(1)}
+          onMouseDown={() => { if (!isLoading && profileId) setIsPressed(1); }}
+          onMouseUp={() => setIsPressed(null)}
+          onMouseLeave={() => setIsPressed(null)}
           disabled={isLoading || !profileId}
-          className={`px-3 py-1 border rounded transition-colors font-bold ${
-            currentVote?.vote_value === 1
-              ? 'bg-green-500 text-white border-green-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100 disabled:opacity-50'
-          }`}
+          style={{ 
+            fontSize: '40px', 
+            width: '40px', 
+            height: '40px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer', 
+            opacity: (!profileId || isLoading) ? 0.4 : 1,
+            color: currentVote?.vote_value === 1 ? 'green' : 'gray', 
+            background: 'none', 
+            border: '1px solid lightgrey', 
+            borderRadius: '6px',
+            padding: '4px',
+            transform: isPressed === 1 ? 'scale(0.85)' : 'scale(1)',
+            transition: 'transform 0.1s ease',
+            backgroundColor: isPressed === 1 ? '#e9d5ff' : 'transparent'
+          }}
           title="Upvote"
         >
-          ↑
+          ▲
         </button>
         <button
           onClick={() => handleVote(-1)}
+          onMouseDown={() => { if (!isLoading && profileId) setIsPressed(-1); }}
+          onMouseUp={() => setIsPressed(null)}
+          onMouseLeave={() => setIsPressed(null)}
           disabled={isLoading || !profileId}
-          className={`px-3 py-1 border rounded transition-colors font-bold ${
-            currentVote?.vote_value === -1
-              ? 'bg-red-500 text-white border-red-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100 disabled:opacity-50'
-          }`}
+          style={{ 
+            fontSize: '40px', 
+            width: '40px', 
+            height: '40px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer', 
+            opacity: (!profileId || isLoading) ? 0.4 : 1,
+            color: currentVote?.vote_value === -1 ? 'red' : 'gray', 
+            background: 'none', 
+            border: '1px solid lightgrey', 
+            borderRadius: '6px',
+            padding: '4px',
+            transform: isPressed === -1 ? 'scale(0.85)' : 'scale(1)',
+            transition: 'transform 0.1s ease',
+            backgroundColor: isPressed === -1 ? '#e9d5ff' : 'transparent'
+          }}
           title="Downvote"
         >
-          ↓
+          ▼
         </button>
       </div>
     </div>
@@ -146,7 +180,7 @@ export default function ImageGrid({ initialImages }: { initialImages: any[] }) {
 
   return (
     <div>
-      <div className="black-box grow grid grid-cols-3 gap-4 p-4">
+      <div className="black-box grid grid-cols-3 gap-y-6 gap-x-4 px-4 pb-4 pt-0">
         {images.map((image) => (
           <CaptionCard key={image.id} image={image} />
         ))}

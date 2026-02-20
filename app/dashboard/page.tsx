@@ -52,12 +52,13 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex justify-between items-center p-4">
-        <h1 className="text-2xl">Welcome, {user.email}</h1>
+      <div className="flex justify-end p-4">
         <SignOutButton />
       </div>
-      <h1 className="comic-title">the humor project</h1>
-      <h2 className="comic-subtitle">captions list</h2>
+      <div className="flex flex-col items-center" style={{ marginBottom: '8px' }}>
+        <h1 className="font-[700] text-black leading-none uppercase" style={{ fontSize: '84px', marginBottom: '0px' }}>the humor project</h1>
+        <h2 className="font-[600] text-black" style={{ fontSize: '44px', marginTop: '0px' }}>Welcome, {user.email}</h2>
+      </div>
       <ImageGrid initialImages={initialImages} />
     </div>
   );
