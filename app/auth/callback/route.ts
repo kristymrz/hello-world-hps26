@@ -23,5 +23,5 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL('/?error=auth_failed', request.url));
   }
 
-  return NextResponse.redirect(new URL('https://hello-world-hps26.vercel.app/dashboard', request.url));
+  return NextResponse.redirect(new URL('/voting', request.url));
 }

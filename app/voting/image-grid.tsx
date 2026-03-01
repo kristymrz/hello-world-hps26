@@ -59,7 +59,7 @@ function CaptionCard({ image }: { image: any }) {
           height={200}
           className="w-full h-48 object-contain"
         />
-        <p className="mt-2 text-[25px] text-center">{image.caption}</p>
+        <p className="mt-2 text-[25px] text-center" style={{ color: 'white' }}>{image.caption}</p>
       </div>
       <div 
         style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '16px', width: '100%' }}
@@ -79,14 +79,13 @@ function CaptionCard({ image }: { image: any }) {
             justifyContent: 'center', 
             cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer', 
             opacity: (!profileId || isLoading) ? 0.4 : 1,
-            color: currentVote?.vote_value === 1 ? 'green' : 'gray', 
-            background: 'none', 
-            border: '1px solid lightgrey', 
+            color: currentVote?.vote_value === 1 ? '#22c55e' : '#a1a1aa', 
+            backgroundColor: 'white', 
+            border: 'none', 
             borderRadius: '6px',
             padding: '4px',
             transform: isPressed === 1 ? 'scale(0.85)' : 'scale(1)',
             transition: 'transform 0.1s ease',
-            backgroundColor: isPressed === 1 ? '#e9d5ff' : 'transparent'
           }}
           title="Upvote"
         >
@@ -107,14 +106,13 @@ function CaptionCard({ image }: { image: any }) {
             justifyContent: 'center', 
             cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer', 
             opacity: (!profileId || isLoading) ? 0.4 : 1,
-            color: currentVote?.vote_value === -1 ? 'red' : 'gray', 
-            background: 'none', 
-            border: '1px solid lightgrey', 
+            color: currentVote?.vote_value === -1 ? '#ef4444' : '#a1a1aa', 
+            backgroundColor: 'white', 
+            border: 'none', 
             borderRadius: '6px',
             padding: '4px',
             transform: isPressed === -1 ? 'scale(0.85)' : 'scale(1)',
             transition: 'transform 0.1s ease',
-            backgroundColor: isPressed === -1 ? '#e9d5ff' : 'transparent'
           }}
           title="Downvote"
         >
@@ -130,6 +128,7 @@ export default function ImageGrid({ initialImages }: { initialImages: any[] }) {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialImages.length === ITEMS_PER_PAGE);
+  const [isViewMoreHovered, setIsViewMoreHovered] = useState(false);
   const supabase = createClient();
 
   const handleLoadMore = async () => {
@@ -151,8 +150,13 @@ export default function ImageGrid({ initialImages }: { initialImages: any[] }) {
       `)
       .eq('is_public', true)
       .eq('images.is_public', true)
+      .not('content', 'is', null)
+      .neq('content', '')
+      .order('created_datetime_utc', { foreignTable: 'images', ascending: false })
+      .order('id', { ascending: false })
       .range(startIndex, endIndex);
-
+      
+    console.log('ahhhh raw fetch count:', data?.length, data);
     if (error) {
       console.error("Error fetching images and captions:", error);
       setHasMore(false);
@@ -169,7 +173,13 @@ export default function ImageGrid({ initialImages }: { initialImages: any[] }) {
           image_description: image.image_description,
           caption: captionData.content,
         };
-      }).filter(Boolean) || [];
+      }).filter(item => 
+        item && 
+        item.id && 
+        item.captionId && 
+        item.url && 
+        item.caption
+      ) as any[] || [];
 
       setImages((prevImages) => [...prevImages, ...processedImages]);
       setHasMore(data?.length === ITEMS_PER_PAGE);
@@ -186,19 +196,30 @@ export default function ImageGrid({ initialImages }: { initialImages: any[] }) {
         ))}
       </div>
       {hasMore && !loading && (
-        <div className="flex justify-center mt-4 mb-8">
+        <div style={{ margin: '40px auto', display: 'flex', justifyContent: 'center' }}>
           <button
             onClick={handleLoadMore}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
+            onMouseEnter={() => setIsViewMoreHovered(true)}
+            onMouseLeave={() => setIsViewMoreHovered(false)}
+            style={{
+              backgroundColor: isViewMoreHovered ? '#FAFF4A' : '#863067',
+              color: isViewMoreHovered ? '#28290D' : '#ffffff',
+              border: '2px solid #ffffff',
+              padding: '10px 20px',
+              fontSize: '26px',
+              borderRadius: '8px',
+              transition: 'all 300ms ease-in-out'
+            }}
+            className="font-bold uppercase cursor-pointer"
           >
             View More
           </button>
         </div>
       )}
       {!hasMore && images.length > 0 && !loading && (
-        <p className="text-center mt-4 mb-8 text-gray-500">No more images to load.</p>
+        <p className="text-center mt-4 mb-8 text-gray-500" style={{ color: 'white' }}>No more images to load.</p>
       )}
-      {loading && <p className="text-center mt-8">Loading more images...</p>}
+      {loading && <p className="text-center mt-8" style={{ color: 'white' }}>Loading more images...</p>}
     </div>
   );
 }

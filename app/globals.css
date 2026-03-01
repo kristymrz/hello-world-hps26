@@ -7,6 +7,7 @@
 
 * {
   font-family: 'Handjet', Arial, Helvetica, sans-serif;
+  color: white;
 }
 
 :root {
@@ -14,8 +15,8 @@
 }
 
 body {
-  background-color: white;
-  color: black;
+  background-color: #571F43;
+  color: white;
   font-family: 'Handjet', Arial, Helvetica, sans-serif;
   width: 100%;
   margin: 0;
@@ -24,23 +25,23 @@ body {
 }
 
 .comic-title {
-  font-family: 'Luckiest Guy', cursive; /* Apply Luckiest Guy font */
-  font-size: 4rem; /* Large font size */
-  font-weight: normal; /* Luckiest Guy is naturally bold */
-  color: white; /* White fill color */
-  cursor: pointer; /* Indicate it's interactive/animated */
-  margin-bottom: 1.5rem; /* Increased margin for spacing before subtitle */
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 4rem;
+  font-weight: normal;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
   text-align: center;
-  line-height: 1; /* Adjust line height for comic style */
+  line-height: 1;
 }
 
 .comic-subtitle {
-  font-family: 'Luckiest Guy', cursive; /* Apply Luckiest Guy font */
-  font-size: 2.5rem; /* Smaller font size */
-  font-weight: normal; /* Luckiest Guy is naturally bold */
-  color: white; /* White fill color */
-  font-style: normal; /* Remove italicization */
-  margin-top: 0; /* No top margin as title has margin-bottom */
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: white;
+  font-style: normal;
+  margin-top: 0;
   text-align: center;
   line-height: 1;
 }
@@ -53,9 +54,9 @@ body {
 }
 
 .card {
-  background-color: transparent; /* Unfilled */
-  padding: 1rem; /* Some internal spacing */
-  border: 1px solid #ccc; /* Light border */
-  border-radius: 0.5rem; /* Slightly rounded corners */
-  color: black; /* Ensure text is visible */
+  background-color: #7D2C60;
+  padding: 1rem;
+  border: 1px solid white;
+  border-radius: 0.5rem;
+  color: white;
 }

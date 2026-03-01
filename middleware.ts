@@ -8,7 +8,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+  const protectedRoutes = ['/voting', '/upload-and-caption-gen'];
+  const isProtectedRoute = protectedRoutes.some(route => 
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
@@ -16,5 +21,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/voting/:path*', '/upload-and-caption-gen/:path*'],
 };
