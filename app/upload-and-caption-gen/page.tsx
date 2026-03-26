@@ -39,6 +39,7 @@ export default function UploadPage() {
   };
 
   const getPresignedUrl = async (token: string, contentType: string) => {
+    console.log('[1/4] getPresignedUrl: requesting presigned URL for contentType:', contentType);
     const response = await fetch('https://api.almostcrackd.ai/pipeline/generate-presigned-url', {
       method: 'POST',
       headers: {
@@ -48,12 +49,15 @@ export default function UploadPage() {
       body: JSON.stringify({ contentType }),
     });
 
+    console.log('[1/4] getPresignedUrl: response status:', response.status, response.statusText);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('[1/4] getPresignedUrl: error response body:', errorData);
       throw new Error(errorData.message || `Failed to generate upload URL: ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('[1/4] getPresignedUrl: success, cdnUrl:', data.cdnUrl, '| presignedUrl present:', !!data.presignedUrl);
     return {
       presignedUrl: data.presignedUrl as string,
       cdnUrl: data.cdnUrl as string,
@@ -61,6 +65,7 @@ export default function UploadPage() {
   };
 
   const uploadToS3 = async (presignedUrl: string, file: File) => {
+    console.log('[2/4] uploadToS3: uploading file', file.name, '(', file.size, 'bytes,', file.type, ')');
     const response = await fetch(presignedUrl, {
       method: 'PUT',
       headers: {
@@ -69,34 +74,43 @@ export default function UploadPage() {
       body: file,
     });
 
+    console.log('[2/4] uploadToS3: response status:', response.status, response.statusText);
     if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      console.error('[2/4] uploadToS3: error response body:', errorText);
       throw new Error(`Failed to upload file to S3: ${response.statusText}`);
     }
+    console.log('[2/4] uploadToS3: upload successful');
   };
 
   const registerImage = async (token: string, cdnUrl: string) => {
+    console.log('[3/4] registerImage: registering cdnUrl:', cdnUrl);
     const response = await fetch('https://api.almostcrackd.ai/pipeline/upload-image-from-url', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
-        imageUrl: cdnUrl, 
-        isCommonUse: false 
+      body: JSON.stringify({
+        imageUrl: cdnUrl,
+        isCommonUse: false
       }),
     });
 
+    console.log('[3/4] registerImage: response status:', response.status, response.statusText);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('[3/4] registerImage: error response body:', errorData);
       throw new Error(errorData.message || `Failed to register image: ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('[3/4] registerImage: success, imageId:', data.imageId, '| full response:', data);
     return data.imageId as string;
   };
 
   const generateCaptionsRequest = async (token: string, imageId: string) => {
+    console.log('[4/4] generateCaptionsRequest: requesting captions for imageId:', imageId);
     const response = await fetch('https://api.almostcrackd.ai/pipeline/generate-captions', {
       method: 'POST',
       headers: {
@@ -106,38 +120,48 @@ export default function UploadPage() {
       body: JSON.stringify({ imageId }),
     });
 
+    console.log('[4/4] generateCaptionsRequest: response status:', response.status, response.statusText);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('[4/4] generateCaptionsRequest: error response body:', errorData);
       throw new Error(errorData.message || `Failed to generate captions: ${response.statusText}`);
     }
 
-    return await response.json();
+    const result = await response.json();
+    console.log('[4/4] generateCaptionsRequest: success, result type:', typeof result, '| isArray:', Array.isArray(result), '| raw result:', result);
+    return result;
   };
 
   const handleGenerateCaptions = async () => {
     if (!selectedFile) return;
-    
+
     setError(null);
     setCaptions([]);
 
     try {
+      console.log('[pipeline] starting caption generation for file:', selectedFile.name);
       const token = await getToken();
-      
+      console.log('[pipeline] token acquired, length:', token.length);
+
       setPipelineStep('Generating presigned URL...');
       const { presignedUrl, cdnUrl } = await getPresignedUrl(token, selectedFile.type);
-      
+
       setPipelineStep('Uploading image bytes...');
       await uploadToS3(presignedUrl, selectedFile);
-      
+
       setPipelineStep('Registering image...');
       const imageId = await registerImage(token, cdnUrl);
-      
+
       setPipelineStep('Generating captions...');
       const result = await generateCaptionsRequest(token, imageId);
-      
-      setCaptions(result);
+
+      console.log('[pipeline] setting captions, count:', Array.isArray(result) ? result.length : 'not an array');
+      setCaptions(Array.isArray(result) ? result : []);
+      if (!Array.isArray(result)) {
+        console.warn('[pipeline] expected array of captions but got:', result);
+      }
     } catch (err: any) {
-      console.error('Pipeline error:', err);
+      console.error('[pipeline] error:', err);
       setError(err.message || 'An unexpected error occurred during processing.');
     } finally {
       setPipelineStep(null);
