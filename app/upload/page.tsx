@@ -220,12 +220,40 @@ export default function UploadPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#571F43] text-white">
       <Navbar userEmail={userEmail} />
-      <main className="flex-grow flex flex-col items-center p-8 pt-16 gap-12 max-w-6xl mx-auto w-full" style={{ paddingBottom: '100px' }}>
+      <main className="upload-main flex-grow flex flex-col items-center gap-12 max-w-6xl mx-auto w-full">
         
+        {/* Section 2: Results Wrapper */}
+        {captions.length > 0 && previewUrl && (
+          <div
+            className="upload-results w-full max-w-[630px] flex flex-col items-center border-[4px] border-[#e0a9cc] animate-in fade-in slide-in-from-bottom-4 duration-500"
+            style={{ borderRadius: '0', marginBottom: '48px' }}
+          >
+            <div className="w-full flex flex-col items-center mb-8">
+              <div className="border-[4px] border-white overflow-hidden bg-[#7D2C60] w-full p-4" style={{ maxWidth: '400px' }}>
+                <img src={previewUrl} alt="Processed" className="w-full h-auto block border-2 border-white" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-6 w-full">
+              <h2 className="font-bold uppercase text-white m-0 text-center" style={{ fontSize: '32px' }}>
+                CAPTIONS
+              </h2>
+              <div className="flex flex-col gap-4">
+                {captions.map((cap, index) => (
+                  <div key={index} className="border-[2px] border-white p-4 bg-[#7D2C60] flex flex-col items-center justify-center text-center">
+                    <p className="text-white m-0 font-semibold" style={{ fontSize: '23px' }}>
+                      {typeof cap === 'string' ? cap : cap.content || JSON.stringify(cap)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Section 1: Upload Logic Wrapper */}
-        <div 
-          className="w-full max-w-[630px] flex flex-col items-center p-12 border-[4px] border-[#e0a9cc]"
-          style={{ borderRadius: '0', paddingBottom: '60px' }}
+        <div
+          className="upload-wrapper w-full max-w-[630px] flex flex-col items-center border-[4px] border-[#e0a9cc]"
+          style={{ borderRadius: '0' }}
         >
           {/* Header Text Section */}
           <div className="flex flex-col items-center text-center mb-12">
@@ -245,8 +273,9 @@ export default function UploadPage() {
               onDragLeave={onDragLeave}
               onDrop={onDrop}
               className="relative transition-colors duration-200 cursor-pointer flex flex-col items-center justify-center overflow-hidden mb-12"
-              style={{ 
-                width: '400px', 
+              style={{
+                width: '100%',
+                maxWidth: '400px',
                 minHeight: '300px',
                 border: '4px dashed',
                 borderColor: isDragOver ? '#EAB308' : '#ffffff',
@@ -328,33 +357,6 @@ export default function UploadPage() {
           </div>
         </div>
 
-        {/* Section 2: Results Wrapper */}
-        {captions.length > 0 && previewUrl && (
-          <div 
-            className="w-full max-w-[630px] flex flex-col items-center border-[4px] border-[#e0a9cc] animate-in fade-in slide-in-from-bottom-4 duration-500"
-            style={{ borderRadius: '0', padding: '40px' }}
-          >
-            <div className="w-full flex flex-col items-center mb-8">
-              <div className="border-[4px] border-white overflow-hidden bg-[#7D2C60] w-full p-4" style={{ maxWidth: '400px' }}>
-                <img src={previewUrl} alt="Processed" className="w-full h-auto block border-2 border-white" />
-              </div>
-            </div>
-            <div className="flex flex-col gap-6 w-full">
-              <h2 className="font-bold uppercase text-white m-0 text-center" style={{ fontSize: '32px' }}>
-                CAPTIONS
-              </h2>
-              <div className="flex flex-col gap-4">
-                {captions.map((cap, index) => (
-                  <div key={index} className="border-[2px] border-white p-4 bg-[#7D2C60] flex flex-col items-center justify-center text-center">
-                    <p className="text-white m-0 font-semibold" style={{ fontSize: '23px' }}>
-                      {typeof cap === 'string' ? cap : cap.content || JSON.stringify(cap)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );

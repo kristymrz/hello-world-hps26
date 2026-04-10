@@ -19,10 +19,11 @@ const StarButton = ({ href, text }: { href: string; text: string }) => {
         onMouseLeave={() => setIsHovered(false)}
         className="no-underline"
       >
-        <svg 
-          viewBox="0 0 180 180" 
-          style={{ 
-            width: '220px', 
+        <svg
+          viewBox="0 0 180 180"
+          className="navbar-star-svg"
+          style={{
+            width: '220px',
             height: '220px',
             transition: 'transform 300ms ease-in-out',
             transform: isHovered ? 'rotate(20deg)' : 'rotate(0deg)'
@@ -66,24 +67,24 @@ export function Navbar({ userEmail }: NavbarProps) {
   return (
     <div className="w-full">
       {/* Top right Sign Out button with margin */}
-      <div className="flex justify-end p-4">
+      <div className="flex justify-end" style={{ padding: '16px 24px' }}>
         <SignOutButton />
       </div>
 
       <nav className="w-full pb-4 px-4">
-        <div className="flex items-center justify-center">
+        <div className="navbar-nav flex items-center justify-center">
           {/* Left Link Container */}
           <div className="flex-1 flex justify-center">
             <StarButton href="/voting" text="voting" />
           </div>
 
           {/* Center: Title and Subtitle Pair */}
-          <div className="flex flex-col items-center text-center">
-            <h1 className="font-[700] leading-none uppercase m-0 text-white" style={{ fontSize: '90px' }}>
+          <div className="navbar-title-container flex flex-col items-center text-center">
+            <h1 className="navbar-title font-[700] leading-none uppercase m-0 text-white" style={{ fontSize: '90px' }}>
               the humor project
             </h1>
             {userEmail && (
-              <h2 className="font-[600] mt-[-50px] text-white opacity-90" style={{ fontSize: '40px' }}>
+              <h2 className="navbar-subtitle font-[600] mt-[-50px] text-white opacity-90" style={{ fontSize: '40px' }}>
                 Welcome, {userEmail}
               </h2>
             )}
@@ -92,7 +93,7 @@ export function Navbar({ userEmail }: NavbarProps) {
 
           {/* Right Link Container */}
           <div className="flex-1 flex justify-center">
-            <StarButton href="/upload-and-caption-gen" text="upload" />
+            <StarButton href="/upload" text="upload" />
           </div>
         </div>
       </nav>

@@ -50,7 +50,7 @@ function CaptionCard({ image }: { image: any }) {
   };
 
   return (
-    <div key={image.captionId} className="card flex flex-col">
+    <div key={image.id} className="card flex flex-col">
       <div className="flex-grow">
         <Image
           src={image.url}
@@ -59,9 +59,9 @@ function CaptionCard({ image }: { image: any }) {
           height={200}
           className="w-full h-48 object-contain"
         />
-        <p className="mt-2 text-[25px] text-center" style={{ color: 'white' }}>{image.caption}</p>
+        <p className="mt-2 text-[25px] text-center">{image.caption}</p>
       </div>
-      <div
+      <div 
         style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '16px', width: '100%' }}
       >
         <button
@@ -70,22 +70,23 @@ function CaptionCard({ image }: { image: any }) {
           onMouseUp={() => setIsPressed(null)}
           onMouseLeave={() => setIsPressed(null)}
           disabled={isLoading || !profileId}
-          style={{
-            fontSize: '40px',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer',
+          style={{ 
+            fontSize: '40px', 
+            width: '40px', 
+            height: '40px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer', 
             opacity: (!profileId || isLoading) ? 0.4 : 1,
-            color: currentVote?.vote_value === 1 ? '#22c55e' : '#a1a1aa',
-            backgroundColor: 'white',
-            border: 'none',
+            color: currentVote?.vote_value === 1 ? 'green' : 'gray', 
+            background: 'none', 
+            border: '1px solid lightgrey', 
             borderRadius: '6px',
             padding: '4px',
             transform: isPressed === 1 ? 'scale(0.85)' : 'scale(1)',
             transition: 'transform 0.1s ease',
+            backgroundColor: isPressed === 1 ? '#e9d5ff' : 'transparent'
           }}
           title="Upvote"
         >
@@ -97,22 +98,23 @@ function CaptionCard({ image }: { image: any }) {
           onMouseUp={() => setIsPressed(null)}
           onMouseLeave={() => setIsPressed(null)}
           disabled={isLoading || !profileId}
-          style={{
-            fontSize: '40px',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer',
+          style={{ 
+            fontSize: '40px', 
+            width: '40px', 
+            height: '40px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            cursor: (!profileId || isLoading) ? 'not-allowed' : 'pointer', 
             opacity: (!profileId || isLoading) ? 0.4 : 1,
-            color: currentVote?.vote_value === -1 ? '#ef4444' : '#a1a1aa',
-            backgroundColor: 'white',
-            border: 'none',
+            color: currentVote?.vote_value === -1 ? 'red' : 'gray', 
+            background: 'none', 
+            border: '1px solid lightgrey', 
             borderRadius: '6px',
             padding: '4px',
             transform: isPressed === -1 ? 'scale(0.85)' : 'scale(1)',
             transition: 'transform 0.1s ease',
+            backgroundColor: isPressed === -1 ? '#e9d5ff' : 'transparent'
           }}
           title="Downvote"
         >
@@ -123,18 +125,16 @@ function CaptionCard({ image }: { image: any }) {
   );
 }
 
-export default function ImageGrid({ initialImages, totalCount }: { initialImages: any[], totalCount: number }) {
+export default function ImageGrid({ initialImages }: { initialImages: any[] }) {
   const [images, setImages] = useState(initialImages);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(initialImages.length === ITEMS_PER_PAGE);
   const supabase = createClient();
 
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-
-  const fetchPage = async (pageNum: number) => {
-    if (pageNum === currentPage || loading) return;
+  const handleLoadMore = async () => {
     setLoading(true);
-    const startIndex = (pageNum - 1) * ITEMS_PER_PAGE;
+    const startIndex = page * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE - 1;
 
     const { data, error } = await supabase
@@ -153,15 +153,19 @@ export default function ImageGrid({ initialImages, totalCount }: { initialImages
       .eq('images.is_public', true)
       .not('content', 'is', null)
       .neq('content', '')
-      .order('created_datetime_utc', { ascending: false })
+      .order('created_datetime_utc', { foreignTable: 'images', ascending: false })
+      .order('id', { ascending: false })
       .range(startIndex, endIndex);
-
+      
     if (error) {
-      console.error("Error fetching page:", error);
+      console.error("Error fetching images and captions:", error);
+      setHasMore(false);
     } else {
-      const processed = (data?.map(captionData => {
+      const processedImages = data?.map(captionData => {
         const image = Array.isArray(captionData.images) ? captionData.images[0] : captionData.images;
-        if (!image) return null;
+        if (!image) {
+          return null;
+        }
         return {
           id: image.id,
           captionId: captionData.id,
@@ -169,71 +173,42 @@ export default function ImageGrid({ initialImages, totalCount }: { initialImages
           image_description: image.image_description,
           caption: captionData.content,
         };
-      }).filter(item => item && item.id && item.captionId && item.url && item.caption) ?? []) as any[];
+      }).filter(item => 
+        item && 
+        item.id && 
+        item.captionId && 
+        item.url && 
+        item.caption
+      ) as any[] || [];
 
-      setImages(processed);
-      setCurrentPage(pageNum);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setImages((prevImages) => [...prevImages, ...processedImages]);
+      setHasMore(data?.length === ITEMS_PER_PAGE);
+      setPage(prevPage => prevPage + 1);
     }
     setLoading(false);
   };
 
-  const renderPageNumbers = () => {
-    // Build the list of page numbers to show, with null representing ellipsis
-    const pages: (number | null)[] = [];
-    const delta = 2; // pages on each side of current
-
-    const rangeStart = Math.max(2, currentPage - delta);
-    const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
-
-    pages.push(1);
-    if (rangeStart > 2) pages.push(null);
-    for (let i = rangeStart; i <= rangeEnd; i++) pages.push(i);
-    if (rangeEnd < totalPages - 1) pages.push(null);
-    if (totalPages > 1) pages.push(totalPages);
-
-    return pages.map((p, idx) => {
-      if (p === null) {
-        return <span key={`ellipsis-${idx}`} style={{ color: 'white', fontSize: '20px', fontWeight: 'bold', lineHeight: '1', alignSelf: 'center' }}>...</span>;
-      }
-      const isActive = p === currentPage;
-      return (
-        <button
-          key={p}
-          onClick={() => fetchPage(p)}
-          disabled={isActive || loading}
-          style={{
-            backgroundColor: 'transparent',
-            color: isActive ? '#FAFF4A' : '#ffffff',
-            border: 'none',
-            padding: '0 4px',
-            fontSize: '20px',
-            cursor: isActive || loading ? 'default' : 'pointer',
-            fontWeight: 'bold',
-            textDecoration: isActive ? 'none' : 'underline',
-            opacity: loading && !isActive ? 0.5 : 1,
-          }}
-        >
-          {p}
-        </button>
-      );
-    });
-  };
-
   return (
     <div>
-      <div className="black-box responsive-grid grid gap-y-6 gap-x-4 px-4 pb-4 pt-0">
+      <div className="black-box grid grid-cols-3 gap-y-6 gap-x-4 px-4 pb-4 pt-0">
         {images.map((image) => (
-          <CaptionCard key={image.captionId} image={image} />
+          <CaptionCard key={image.id} image={image} />
         ))}
       </div>
-      {loading && <p className="text-center mt-8" style={{ color: 'white' }}>Loading...</p>}
-      {totalPages > 1 && (
-        <div style={{ margin: '40px auto', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', flexWrap: 'wrap', paddingBottom: '40px' }}>
-          <span style={{ color: 'white', fontSize: '20px', fontWeight: 'bold', marginRight: '8px' }}>Go to page</span>
-          {renderPageNumbers()}
+      {hasMore && !loading && (
+        <div className="flex justify-center mt-4 mb-8">
+          <button
+            onClick={handleLoadMore}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
+          >
+            View More
+          </button>
         </div>
       )}
+      {!hasMore && images.length > 0 && !loading && (
+        <p className="text-center mt-4 mb-8 text-gray-500">No more images to load.</p>
+      )}
+      {loading && <p className="text-center mt-8">Loading more images...</p>}
     </div>
   );
 }
